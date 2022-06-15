@@ -10,6 +10,14 @@ router.post('/', (req, res) => {
     return res.status(400)
       .send("Error! One or more of the required request fields are empty");
   }
+  else if (typeof quantity !== 'number') {
+    return res.status(400)
+      .send("Error! Quantity field sent invaild data type");
+  }
+  else if (status !== 'In Stock' && status !== 'Out of Stock') {
+    return res.status(400)
+      .send("Error! Status field sent invalid data");
+  }
   else {
     const newItem = {
       id: uuidv4(),
