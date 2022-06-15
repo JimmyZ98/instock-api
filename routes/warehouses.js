@@ -2,10 +2,13 @@ const express = require('express');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
-const { body, validationResult } = require('express-validator');
 
 
 const warehousesData = JSON.parse(fs.readFileSync('data/warehouses.json'));
+
+const regexPhone = new RegExp(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, 'im');
+const regexEmail = new RegExp(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, 'i');
+
 
 router.get('/', (_req, res) => {
     res.json(warehousesData.map(warehouse => {
@@ -22,24 +25,22 @@ router.get('/', (_req, res) => {
     }));
 });
 
-router.post(
-    '/',
-    // contactEmail must be valid email address
-    body('contactEmail').isEmail(),
-    // contactPhone must be valid phone number
-    body('contactPhone').isMobilePhone(),
-    (req, res) => {
-        let { name, address, city, country, contactName, contactPosition, contactPhone, contactEmail } = req.body;
-        const errors = validationResult(req);
+router.post('/', (req, res) => {
+    let { name, address, city, country, contact: { contactName, contactPosition, contactPhone, contactEmail } } = req.body;
 
-        // check if all fields are filled
-        if (!name || !address || !city || !country || !contactName || !contactPosition || !contactPhone || !contactEmail ) {
-            return res.status(400).json("Error: at least one field is empty");
-        }
-        else if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
+    // check if all fields are filled
+    if (!name || !address || !city || !country || !contactName || !contactPosition || !contactPhone || !contactEmail) {
+        return res.status(400).json("Error: at least one field is empty");
+    }
+    // check for valid phone number
+    else if (!regexPhone.test(contactPhone)) {
+        return res.status(400).json("Invalid phone number");
+    }
+    //check for valid email address
+    else if (!regexEmail.test(contactEmail)) {
+        return res.status(400).json("Invalid email address");
+    }
+    else {
         const newWarehouse = {
             ...req.body,
             id: uuidv4(),
@@ -47,17 +48,22 @@ router.post(
             address,
             city,
             country,
-            contactName,
-            contactPosition,
-            contactPhone,
-            contactEmail
+            contact: {
+                contactName,
+                contactPosition,
+                contactPhone,
+                contactEmail
+            }
         };
+
+        console.log(newWarehouse);
 
         const allWarehouses = [...warehousesData, newWarehouse];
 
         fs.writeFileSync('./data/warehouses.json', JSON.stringify(allWarehouses));
 
         res.status(201).json(newWarehouse);
-    })
+    }
+})
 
 module.exports = router;
