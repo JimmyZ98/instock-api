@@ -5,10 +5,13 @@ require('dotenv').config();
 const warehousesRoute = require('./routes/warehouses');
 const inventoryRoute = require('./routes/inventory');
 const port = process.env.PORT || 8000;
+const morgan = require('morgan');
 
 app.use(cors());
 
 app.use(express.json());
+
+app.use(morgan("tiny"));
 
 app.use(express.static('public'));
 
