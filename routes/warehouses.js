@@ -26,18 +26,19 @@ router.get('/', (_req, res) => {
 });
 
 router.post('/', (req, res) => {
-    let { name, address, city, country, contact: { contactName, contactPosition, contactPhone, contactEmail } } = req.body;
+    console.log(req.body);
+    let { name, address, city, country, contact: { position, phone, email } } = req.body;
 
     // check if all fields are filled
-    if (!name || !address || !city || !country || !contactName || !contactPosition || !contactPhone || !contactEmail) {
+    if (!name || !address || !city || !country || !position || !phone || !email) {
         return res.status(400).json("Error: at least one field is empty");
     }
     // check for valid phone number
-    else if (!regexPhone.test(contactPhone)) {
+    else if (!regexPhone.test(phone)) {
         return res.status(400).json("Invalid phone number");
     }
     //check for valid email address
-    else if (!regexEmail.test(contactEmail)) {
+    else if (!regexEmail.test(email)) {
         return res.status(400).json("Invalid email address");
     }
     else {
@@ -49,10 +50,10 @@ router.post('/', (req, res) => {
             city,
             country,
             contact: {
-                contactName,
-                contactPosition,
-                contactPhone,
-                contactEmail
+                name: req.body.contact.name,
+                position,
+                phone,
+                email
             }
         };
 
