@@ -3,6 +3,24 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
+
+router.get('/', (_req, res) => {
+  const inventoryList = JSON.parse(fs.readFileSync('./data/inventories.json'));
+  res.json(inventoryList.map(inventory => {
+    return {
+      id: inventory.id,
+      warehouseID: inventory.warehouseID,
+      warehouseName: inventory.warehouseName,
+      itemName: inventory.itemName,
+      description: inventory.description,
+      category: inventory.category,
+      status: inventory.status,
+      quantity: inventory.quantity
+    }
+  }))
+})
+
+
 router.post('/', (req, res) => {
   const { itemName, description, category, status, quantity, warehouseID, warehouseName } = req.body;
 
