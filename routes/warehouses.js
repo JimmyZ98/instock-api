@@ -3,14 +3,13 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
-
-const warehousesData = JSON.parse(fs.readFileSync('data/warehouses.json'));
-
 const regexPhone = new RegExp(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, 'im');
 const regexEmail = new RegExp(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, 'i');
 
 
 router.get('/', (_req, res) => {
+    const warehousesData = JSON.parse(fs.readFileSync('data/warehouses.json'));
+
     res.json(warehousesData.map(warehouse => {
         return {
             name: warehouse.name,
@@ -26,6 +25,8 @@ router.get('/', (_req, res) => {
 });
 
 router.post('/', (req, res) => {
+    const warehousesData = JSON.parse(fs.readFileSync('data/warehouses.json'));
+
     console.log(req.body);
     let { name, address, city, country, contact: { position, phone, email } } = req.body;
 
@@ -68,6 +69,7 @@ router.post('/', (req, res) => {
 })
 
 router.get('/:warehouseId', (req, res) => {
+    const warehousesData = JSON.parse(fs.readFileSync('data/warehouses.json'));
     
     const selectedWarehouse = warehousesData.find((warehouse) => warehouse.id === req.params.warehouseId);
 
