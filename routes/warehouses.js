@@ -67,4 +67,15 @@ router.post('/', (req, res) => {
     }
 })
 
+router.get('/:warehouseId', (req, res) => {
+    
+    const selectedWarehouse = warehousesData.find((warehouse) => warehouse.id === req.params.warehouseId);
+
+    if (!selectedWarehouse) {
+        return res.status(404).send("Warehouse not found");
+    }
+
+    res.json(selectedWarehouse);
+})
+
 module.exports = router;
