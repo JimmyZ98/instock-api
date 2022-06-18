@@ -3,8 +3,6 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const router = express.Router();
 
-const warehousesData = JSON.parse(fs.readFileSync("data/warehouses.json"));
-
 const regexPhone = new RegExp(
   /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
   "im"
@@ -15,6 +13,8 @@ const regexEmail = new RegExp(
 );
 
 router.get("/", (_req, res) => {
+  const warehousesData = JSON.parse(fs.readFileSync("data/warehouses.json"));
+
   res.json(
     warehousesData.map((warehouse) => {
       return {
@@ -32,6 +32,8 @@ router.get("/", (_req, res) => {
 });
 
 router.post("/", (req, res) => {
+  const warehousesData = JSON.parse(fs.readFileSync("data/warehouses.json"));
+
   console.log(req.body);
   let {
     name,
@@ -119,6 +121,22 @@ router.put("/:id", (req, res) => {
 
     res.status(200).json(data);
   }
+});
+
+module.exports = router;
+
+router.get("/:warehouseId", (req, res) => {
+  const warehousesData = JSON.parse(fs.readFileSync("data/warehouses.json"));
+
+  const selectedWarehouse = warehousesData.find(
+    (warehouse) => warehouse.id === req.params.warehouseId
+  );
+
+  if (!selectedWarehouse) {
+    return res.status(404).send("Warehouse not found");
+  }
+
+  res.json(selectedWarehouse);
 });
 
 module.exports = router;
