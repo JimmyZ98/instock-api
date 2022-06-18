@@ -24,11 +24,11 @@ router.get('/', (_req, res) => {
 router.post('/', (req, res) => {
   const { itemName, description, category, status, quantity, warehouseID, warehouseName } = req.body;
 
-  if (!itemName || !description || !category || !status || !quantity || !warehouseID || !warehouseName) {
+  if (!itemName || !description || !category || !status || quantity === undefined || !warehouseID || !warehouseName) {
     return res.status(400)
       .send("Error! One or more of the required request fields are empty");
   }
-  else if (typeof quantity !== 'number') {
+  else if (Number(quantity) !== JSON.parse(quantity)) {
     return res.status(400)
       .send("Error! Quantity field sent invaild data type");
   }
