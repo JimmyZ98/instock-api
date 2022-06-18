@@ -139,4 +139,25 @@ router.get("/:warehouseId", (req, res) => {
   res.json(selectedWarehouse);
 });
 
+router.delete("/:id", (req, res) => {
+  // grabs warehouse array from json
+  const warehousesData = JSON.parse(fs.readFileSync("data/warehouses.json"));
+  // finds the requested warehouse
+  const selectedWarehouse = warehousesData.find(warehouse => warehouse.id === req.params.id);
+  // throws back an error if requested warehouse is not found
+  if (!selectedWarehouse) {
+    return res.status(404).send(`Warehouse with ID ${req.params.id} not found`);
+  } else {
+    // writes a new warehouse array minus the requested warehouse
+    const newWarehousesData = warehousesData.filter(warehouse => warehouse.id !== req.params.id);
+    fs.writeFileSync("./data/warehouses.json", JSON.stringify(newWarehousesData));
+    // grabs inventory array and writes a new one minus all items linked to requested warehouse
+    const inventoryData = JSON.parse(fs.readFileSync("data/inventories.json"));
+    const newInventoryData = inventoryData.filter(item => item.warehouseID !== req.params.id);
+    fs.writeFileSync("./data/inventories.json", JSON.stringify(newInventoryData));
+
+    res.status(200).send(`Deleted warehouse ${req.params.id}`);
+  };
+});
+
 module.exports = router;
