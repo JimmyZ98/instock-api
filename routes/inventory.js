@@ -85,23 +85,27 @@ router.get("/:inventoryId", (req, res) => {
 });
 
 module.exports = router;
-});
 
 router.delete("/:id", (req, res) => {
   // grabs inventory array from json
   const inventoryData = JSON.parse(fs.readFileSync("data/inventories.json"));
   // finds the requested item
-  const selectedItem = inventoryData.find(item => item.id === req.params.id);
+  const selectedItem = inventoryData.find((item) => item.id === req.params.id);
   // throws back an error if requested item is not found
   if (!selectedItem) {
     return res.status(404).send(`Item with ID ${req.params.id} not found`);
   } else {
     // writes a new inventory array minus the requested item
-    const newInventoryData = inventoryData.filter(item => item.id !== req.params.id);
-    fs.writeFileSync("./data/inventories.json", JSON.stringify(newInventoryData));
+    const newInventoryData = inventoryData.filter(
+      (item) => item.id !== req.params.id
+    );
+    fs.writeFileSync(
+      "./data/inventories.json",
+      JSON.stringify(newInventoryData)
+    );
 
     res.status(200).send(`Deleted item ${req.params.id}`);
-  };
+  }
 });
 
 router.put("/:inventoryId", (req, res) => {
