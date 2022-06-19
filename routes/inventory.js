@@ -21,7 +21,7 @@ router.get("/", (_req, res) => {
   );
 });
 
-router.get('/:warehouseId', (req, res) => {
+router.get('/warehouse/:warehouseId', (req, res) => {
     const inventoryList = JSON.parse(fs.readFileSync('./data/inventories.json'));
     const inventoryByWarehouseId = inventoryList.filter((inventory) => inventory.warehouseID === req.params.warehouseId);
     res.json(inventoryByWarehouseId.map(inventory => {
@@ -85,8 +85,6 @@ router.post("/", (req, res) => {
   }
 });
 
-module.exports = router;
-
 router.get("/:inventoryId", (req, res) => {
   const inventoriesData = JSON.parse(fs.readFileSync("data/inventories.json"));
 
@@ -100,8 +98,6 @@ router.get("/:inventoryId", (req, res) => {
 
   res.json(selectedInventory);
 });
-
-module.exports = router;
 
 router.delete("/:id", (req, res) => {
   // grabs inventory array from json
